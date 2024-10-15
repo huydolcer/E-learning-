@@ -30,6 +30,8 @@ public class MenuService {
         if (menuRepository.existsByTitle(menu.getTitle())) {
             throw new RuntimeException("Title da ton tai");
         }
+        System.out.println("request" + request);
+        System.out.println("menu" + menu);
         Menu savedMenu = menuRepository.save(menu);
         System.out.println("Saved Menu: " + savedMenu); // In ra menu đã lưu
         return savedMenu;

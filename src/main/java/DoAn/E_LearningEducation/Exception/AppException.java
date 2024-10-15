@@ -1,6 +1,5 @@
 package DoAn.E_LearningEducation.Exception;
 
-import ch.qos.logback.core.spi.ErrorCodes;
 
 public class AppException extends RuntimeException{
     private ErrorCode errorCode;

@@ -15,7 +15,9 @@ public class BlogCreationRequest {
     String title;
     String content;
     int categoryID;
-    LocalDate dateCreate;
+    String image;
+    LocalDate datecreate;
+    String description;
     int userID;
     int active;
 }

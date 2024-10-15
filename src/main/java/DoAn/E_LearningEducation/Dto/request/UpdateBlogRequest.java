@@ -15,7 +15,9 @@ public class UpdateBlogRequest {
     String title;
     String content;
     int categoryID;
-    LocalDate dateCreate;
+    LocalDate datecreate;
+    String image;
     int userID;
     int active;
+    String description;
 }

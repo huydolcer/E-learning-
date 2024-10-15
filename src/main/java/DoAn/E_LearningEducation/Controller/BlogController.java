@@ -10,7 +10,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,15 +24,24 @@ public class BlogController {
 
     BlogService blogService;
 
-    @GetMapping
+    @GetMapping("/show_Blog")
     List<Blog> showAllBlogs(){
         return blogService.getAllBlogs();
     }
-    @PostMapping("/create_Blog")
-    ResponseEntity<String> createBlog(@RequestBody BlogCreationRequest request){
 
-        blogService.createBlog(request);
-        return ResponseEntity.ok("Blog create successfully!");
+    @GetMapping("/show_BlogUser")
+    List<Blog> showAllBlogByUser(){
+        return blogService.getAllBlogByUser();
+    }
+
+    @PostMapping("/create_blog")
+    public ResponseEntity<String> createBlog(
+            @RequestPart("request") BlogCreationRequest request,
+            @RequestPart("file") MultipartFile file) throws IOException {
+
+        System.out.println("title" + request.getTitle());
+        blogService.createBlog(request, file);
+        return ResponseEntity.ok("Blog created successfully!");
     }
 
     @GetMapping("/get_blog/{id}")
@@ -39,15 +50,21 @@ public class BlogController {
     }
 
     @PutMapping("/update_blog/{id}")
-    ResponseEntity<String> update_Blog(@PathVariable("id") int blogId, UpdateBlogRequest request){
-             blogService.updateBlog(blogId, request);
-        return ResponseEntity.ok("Blog update successfully!");
+    ResponseEntity<String> update_Blog(@PathVariable("id") int blogId,
+                                       @RequestPart("request") UpdateBlogRequest request,
+                                       @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+
+        System.out.println("Blog ID: " + blogId);
+        System.out.println("Request: " + request);
+        System.out.println("File is present: " + (file != null && !file.isEmpty()));
+        blogService.updateBlog(blogId, request, file);
+        return ResponseEntity.ok("Blog updated successfully!");
     }
-    @DeleteMapping("/delete_blog/{id}")
-    ResponseEntity<String> delete_Blog(@PathVariable("id") int blogId){
+
+
+    @DeleteMapping("/delete_blog")
+    ResponseEntity<String> delete_Blog(@RequestParam("id") int blogId) {
         blogService.deleteBlog(blogId);
-
-        return ResponseEntity.ok("Blog delete is successfully!");
+        return ResponseEntity.ok("Blog deleted successfully!");
     }
-
 }

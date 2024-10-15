@@ -16,7 +16,8 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1009,"User not existed",HttpStatus.NOT_FOUND),
     UNAUTHORIZED(1008, "Unauthorized users",HttpStatus.FORBIDDEN),
     BLOG_EXISTED(1102,"Blog existed",HttpStatus.BAD_REQUEST),
-    BLOG_NOT_EXISTED(1007,"Blog is not existed",HttpStatus.NOT_FOUND)
+    BLOG_NOT_EXISTED(1007,"Blog is not existed",HttpStatus.NOT_FOUND),
+    FILE_NOT_EXISTED(10023,"Empty Files",HttpStatus.NOT_FOUND)
     ;
     private int code;
     private String message;

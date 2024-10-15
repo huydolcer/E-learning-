@@ -1,38 +1,23 @@
 package DoAn.E_LearningEducation.Model;
 
-
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
-
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Blog {
-
+@Data
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int blogID;
+    int categoryID;
     String title;
-    String content;
-    String image;
-    String description;
-
-    @ManyToOne
-    @JoinColumn(name = "categoryID")
-    Category category;
-
-    LocalDate datecreate;
-
-    @ManyToOne
-    @JoinColumn(name = "userID")
-    User user;
-    int active;
 }

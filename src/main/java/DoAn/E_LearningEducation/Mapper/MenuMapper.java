@@ -6,7 +6,6 @@ import DoAn.E_LearningEducation.Dto.response.MenuResponse;
 import DoAn.E_LearningEducation.Model.Menu;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Mapper(componentModel = "spring")
 public interface MenuMapper {
