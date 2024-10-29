@@ -13,6 +13,7 @@ import DoAn.E_LearningEducation.Repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,12 +37,12 @@ public class StudentService {
         return studentRepository.save(student);
     }
     public List<Student> getAllStudent(){
-        return  studentRepository.findAll();
+        return studentRepository.findAll();
     }
-
+    @PostAuthorize("returnObject.username = authentication.name or hasRole('ADMIN')")
     public Student getStudentById(String studentId){
 
-        return studentRepository.findById(studentId).orElseThrow(()-> new AppException(ErrorCode.USER_EXISTED));
+        return studentRepository.findById(studentId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
 
     }
 

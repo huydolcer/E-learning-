@@ -23,3 +23,6 @@ logging:
     org.springframework.security: DEBUG
 file:
   upload_dir: src/main/resources/upload_file/img
+
+jwt:
+  signerKey: "YktKO3dyEaQOPcHuqQ4Fo4UPeUvv5DqyH7l6BCTYPGQpsKHdSDR83pKvTanIv7wL"

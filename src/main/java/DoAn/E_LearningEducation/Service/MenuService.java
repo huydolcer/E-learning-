@@ -33,7 +33,7 @@ public class MenuService {
         System.out.println("request" + request);
         System.out.println("menu" + menu);
         Menu savedMenu = menuRepository.save(menu);
-        System.out.println("Saved Menu: " + savedMenu); // In ra menu đã lưu
+        System.out.println("Saved Menu: " + savedMenu);
         return savedMenu;
     }
 

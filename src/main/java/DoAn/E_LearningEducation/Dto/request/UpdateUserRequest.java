@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 public class UpdateUserRequest {
     String username;
     String password;
-    int role;
+    String role;
     String firstname;
     String lastname;
     String email;

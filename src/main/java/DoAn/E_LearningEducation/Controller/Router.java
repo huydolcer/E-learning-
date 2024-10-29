@@ -1,7 +1,15 @@
 package DoAn.E_LearningEducation.Controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Controller
 public class Router {
@@ -10,8 +18,10 @@ public class Router {
     String directionHtml(){
         return "user/index";
     }
-    @GetMapping("/HomeAdmin")
-    String directionHtmlAdmin(){
+
+    @GetMapping("/Admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String directionHtmlAdmin() {
         return "admin/index";
     }
     @GetMapping("/HomeAdmin/MenuAdmin")
@@ -57,5 +67,9 @@ public class Router {
     @GetMapping("/update_student")
     String directionUpdateStudent(){
         return "admin/update_student";
+    }
+    @GetMapping("/login-user")
+    String directionLogin(){
+        return "user/Login";
     }
 }

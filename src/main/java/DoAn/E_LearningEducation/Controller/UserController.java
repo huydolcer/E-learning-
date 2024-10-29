@@ -3,6 +3,7 @@ package DoAn.E_LearningEducation.Controller;
 import DoAn.E_LearningEducation.Dto.request.UpdateUserRequest;
 import DoAn.E_LearningEducation.Dto.request.UserCreationRequest;
 import DoAn.E_LearningEducation.Dto.response.ApiResponse;
+import DoAn.E_LearningEducation.Dto.response.UserResponse;
 import DoAn.E_LearningEducation.Model.User;
 import DoAn.E_LearningEducation.Service.UserService;
 import lombok.AccessLevel;
@@ -42,5 +43,19 @@ public class UserController {
         System.out.println("User Id Controller==" + userId);
         userService.updateUser(userId, request);
         return ResponseEntity.ok("User update is successfully!");
+    }
+    @GetMapping("/findUserById/{id}")
+    ApiResponse<User> findUserById(@PathVariable String id){
+         User user =  userService.getUserById(id);
+        return ApiResponse.<User>builder()
+                .result(user)
+                .build();
+    }
+
+    @GetMapping("/myInfo")
+    ApiResponse<UserResponse> getMyInfo(){
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getMyInfo())
+                .build();
     }
 }

@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,8 +65,11 @@ public class BlogService {
         return blogRepository.save(blog);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Blog> getAllBlogs(){
+
+        log.info("In method getAll Blogs!");
+
         return blogRepository.findAllBlogsWithCategoryAndUser();
     }
     public List<Blog> getAllBlogByUser(){

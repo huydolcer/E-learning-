@@ -1,6 +1,5 @@
 package DoAn.E_LearningEducation.Dto.request;
 
-import jakarta.validation.constraints.Email;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 public class UserCreationRequest {
     String username;
     String password;
-    int role;
+    String role;
     String firstname;
     String lastname;
     String email;

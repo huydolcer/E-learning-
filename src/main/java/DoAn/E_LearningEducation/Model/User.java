@@ -1,16 +1,16 @@
 package DoAn.E_LearningEducation.Model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.Set;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
@@ -18,7 +18,7 @@ public class User {
     String userID;
     String username;
     String password;
-    int role;
+    String role;
     String firstname;
     String lastname;
     String email;

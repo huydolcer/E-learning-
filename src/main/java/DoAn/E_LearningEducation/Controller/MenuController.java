@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,10 @@ public class MenuController {
     MenuService menuService;
     @GetMapping("/menus")
     List<Menu> getAllmenus(){
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("Role =" + authentication.getAuthorities());
+
         return menuService.getAllMenus();
     }
 

@@ -11,9 +11,13 @@ import DoAn.E_LearningEducation.Repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     public User createUser(UserCreationRequest request){
 
@@ -42,7 +47,6 @@ public class UserService {
         userMapper.toUserResponse(user, request);
 
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             userRepository.save(user);
         } else {
@@ -59,8 +63,20 @@ public class UserService {
         return userMapper.userResponse(user);
     }
 
+    public UserResponse getMyInfo(){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User byUsername = userRepository.findByUsername(name)
+                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userMapper.userResponse(byUsername);
+    }
+
     public void deleteUser(String userId){
         userRepository.deleteById(userId);
+    }
+    @PostAuthorize("hasRole('ADMIN') or returnObject.username == authentication.name")
+    public User getUserById(String id){
+        return userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not fount"));
     }
 
 }

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,8 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class UserResponse {
     String username;
-    String password;
-    int role;
+    String role;
     String firstname;
     String lastname;
     String email;
