@@ -381,18 +381,6 @@
                                                 <label for="password" class="form-label">Mật khẩu:</label>
                                                 <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu" required>
                                             </div>
-                                            <div class="row mb-3">
-                                                <div class="col-md-4">
-                                                    <label for="status" class="form-label">Trạng thái:</label>
-                                                    <select class="form-select" id="status" required>
-                                                        <option value="" disabled selected>Chọn trạng thái</option>
-                                                        <option value="studying">Đang theo học</option>
-                                                        <option value="graduated">Đã thôi học</option>
-                                                        <option value="suspended">Bảo lưu</option>
-                                                        <option value="expelled">Đình chỉ học</option>
-                                                    </select>
-                                                </div>
-                                            </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-4">
@@ -417,27 +405,17 @@
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-4">
-                                                <label for="cumulative_credits" class="form-label">Tín chỉ tích lũy:</label>
-                                                <input type="number" class="form-control" id="cumulative_credits" placeholder="Nhập số tín chỉ tích lũy" required>
+                                                <label for="specialization" class="form-label">Chuyên môn hóa:</label>
+                                                <input type="text" class="form-control" id="specialization" placeholder="Nhập Chuyên môn hóa" required>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="phone_number" class="form-label">Số điện thoại:</label>
                                                 <input type="text" class="form-control" id="phone_number" placeholder="Nhập số điện thoại" required>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-4">
-                                                <label for="timetableId" class="form-label">ID Thời khóa biểu:</label>
-                                                <input type="number" class="form-control" id="timetableId" placeholder="Nhập ID thời khóa biểu" required>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="cumulative_points" class="form-label">Số điểm tích lũy:</label>
-                                                <input type="text" class="form-control" id="cumulative_points" placeholder="Nhập số điểm tích lũy" required>
-                                            </div>
-                                        </div>
                                         <div class="row">
                                             <div class="d-grid">
-                                                <button type="submit" id="submit_add" class="btn btn-primary">Thêm sinh viên</button>
+                                                <button type="submit" id="submit_add" class="btn btn-primary">Thêm Giáo viên</button>
                                             </div>
                                         </div>
                                     </form>
@@ -524,11 +502,8 @@
      let email = document.getElementById("email").value;
      let address = document.getElementById("address").value;
      let phone_number = document.getElementById("phone_number").value;
-     let cumulative_credits = document.getElementById("cumulative_credits").value;
-     let role = "STUDENT";
-     let timetableId = document.getElementById("timetableId").value;
-     let cumulative_points = document.getElementById("cumulative_points").value;
-     let status = document.getElementById("status").value;
+     let specialization = document.getElementById("specialization").value;
+     let role = "TEACHER";
 
      let userData = {
          username: username,
@@ -547,22 +522,19 @@
             }})
      .then((response)=>{
          let userId = response.data.result;
-         let studentData = {
+         let teacherData = {
              userId: userId,
-             phone_number: phone_number,
-             cumulative_credit: cumulative_credits,
-             timetableId: timetableId,
-             cumulative_points: cumulative_points,
-             status: status,
+             phoneNumber: phone_number,
+             specialization : specialization,
          }
-         axios.post("/learning_edu/Students/create_student", JSON.stringify(studentData),{
+         axios.post("/learning_edu/admin/Teachers/create-teacher", JSON.stringify(teacherData),{
              headers: {
                  'Content-Type': 'application/json',
              }
          }).then((response)=>{
              getSuccess();
             setTimeout(function(){
-                window.location.href = "/learning_edu/HomeAdmin/AdminStudents";
+                window.location.href = "/learning_edu/Admin/Teachers";
             },2000);
          }).catch((error)=>{
              getError();

@@ -13,12 +13,19 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +34,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -43,21 +51,41 @@ public class AuthenticationService {
         var token =  request.getToken();
 
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-
         SignedJWT signedJWT = SignedJWT.parse(token);
-
         Date expityTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-
         var verified = signedJWT.verify(verifier);
-
         return
                 IntrospectResponse.builder()
                         .valid(verified && expityTime.after(new Date()))
                         .build();
-
-
-
+        
     }
+
+    public boolean validateToken(String token){
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(SIGNER_KEY.getBytes())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void setAuthenticationFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(SIGNER_KEY).parseClaimsJws(token).getBody();
+        String username = claims.getSubject();
+        String role = claims.get("scope", String.class); // Lấy vai trò từ token
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                username, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+
+
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){
         var user = userRepository.findByUsername(request.getUsername())
@@ -70,7 +98,6 @@ public class AuthenticationService {
          throw new AppException(ErrorCode.UN_AUTHENTICATION);
 
         var token = generateToken(user);
-        //System.out.println("token =" + token);
         return AuthenticationResponse.builder()
                 .token(token)
                 .authenticated(true)
@@ -87,7 +114,7 @@ public class AuthenticationService {
                 .issuer("learning_edu")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                        Instant.now().plus(7, ChronoUnit.DAYS).toEpochMilli()
                 ))
                 .claim("scope", user.getRole())
                 .build();

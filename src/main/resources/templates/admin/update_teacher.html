@@ -368,7 +368,7 @@
                 <main>
                     <div class="add_blog">
                         <div class="container mt-5">
-                            <h3 class="text-center">Thêm Nội dung Sinh vien</h3>
+                            <h3 class="text-center">Sửa Nội dung Sinh vien</h3>
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <form>
@@ -380,18 +380,6 @@
                                             <div class="col-md-4">
                                                 <label for="password" class="form-label">Mật khẩu:</label>
                                                 <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu" required>
-                                            </div>
-                                            <div class="row mb-3">
-                                                <div class="col-md-4">
-                                                    <label for="status" class="form-label">Trạng thái:</label>
-                                                    <select class="form-select" id="status" required>
-                                                        <option value="" disabled selected>Chọn trạng thái</option>
-                                                        <option value="studying">Đang theo học</option>
-                                                        <option value="graduated">Đã thôi học</option>
-                                                        <option value="suspended">Bảo lưu</option>
-                                                        <option value="expelled">Đình chỉ học</option>
-                                                    </select>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -417,27 +405,17 @@
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-4">
-                                                <label for="cumulative_credits" class="form-label">Tín chỉ tích lũy:</label>
-                                                <input type="number" class="form-control" id="cumulative_credits" placeholder="Nhập số tín chỉ tích lũy" required>
+                                                <label for="specialization" class="form-label">Chuyên môn hóa:</label>
+                                                <input type="number" class="form-control" id="specialization" placeholder="Nhập Chuyên môn hóa" required>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="phone_number" class="form-label">Số điện thoại:</label>
                                                 <input type="text" class="form-control" id="phone_number" placeholder="Nhập số điện thoại" required>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-4">
-                                                <label for="timetableId" class="form-label">ID Thời khóa biểu:</label>
-                                                <input type="number" class="form-control" id="timetableId" placeholder="Nhập ID thời khóa biểu" required>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="cumulative_points" class="form-label">Số điểm tích lũy:</label>
-                                                <input type="text" class="form-control" id="cumulative_points" placeholder="Nhập số điểm tích lũy" required>
-                                            </div>
-                                        </div>
                                         <div class="row">
                                             <div class="d-grid">
-                                                <button type="submit" id="submit_add" class="btn btn-primary">Thêm sinh viên</button>
+                                                <button type="submit" id="submit_update" class="btn btn-primary">Sửa sinh viên</button>
                                             </div>
                                         </div>
                                     </form>
@@ -514,63 +492,79 @@
     <script src="/learning_edu/admin/js/app.js"></script>
 
     <script>
-        document.getElementById("submit_add").addEventListener("click", function(e) {
-     e.preventDefault();
+        const urlParams = new URLSearchParams(window.location.search);
+     const id = urlParams.get('id');
 
-     let username = document.getElementById("username").value;
-     let password = document.getElementById("password").value;
-     let firstname = document.getElementById("firstname").value;
-     let lastname = document.getElementById("lastname").value;
-     let email = document.getElementById("email").value;
-     let address = document.getElementById("address").value;
-     let phone_number = document.getElementById("phone_number").value;
-     let cumulative_credits = document.getElementById("cumulative_credits").value;
-     let role = "STUDENT";
-     let timetableId = document.getElementById("timetableId").value;
-     let cumulative_points = document.getElementById("cumulative_points").value;
-     let status = document.getElementById("status").value;
+    axios.get(`/learning_edu/admin/Teachers/find-teacher-by-id/${id}`)
+    .then((response) =>{
 
-     let userData = {
-         username: username,
-         password: password,
-         firstname: firstname,
-         lastname: lastname,
-         email: email,
-         address: address,
-         role: role,
-     }
+        const teacher = response.data;
+        document.getElementById("username").value = teacher.user.username;
+        //document.getElementById("password").value = teacher.user.password;
+        document.getElementById("email").value = teacher.user.email;
+        document.getElementById("phone_number").value = teacher.phone_number;
+        document.getElementById("address").value = teacher.user.address;
+        document.getElementById("firstname").value = teacher.user.firstname;
+        document.getElementById("lastname").value = teacher.user.lastname;
+        document.getElementById("specialization").value = teacher.specialization;
+        document.getElementById("userId").value = teacher.user.userID;
+        console.log("userId get =" , document.getElementById('userId').value);
+        console.log("userId = " , teacher.user.userID);
 
+    });
+    document.getElementById("submit_update").addEventListener("click", (e)=>{
+        e.preventDefault(); // ngan chan hanh vi mac dinh
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const email = document.getElementById("email").value;
+        const phone_number = document.getElementById("phoneNumber").value;
+        const address = document.getElementById("address").value;
+        const firstname = document.getElementById("firstname").value;
+        const lastname = document.getElementById("lastname").value;
+        const specialization= document.getElementById("specialization").value;
+        const userId = document.getElementById("userId").value;
 
-     axios.post("/learning_edu/create_user", JSON.stringify(userData),{
-            headers: {
+         const userData = {
+        username: username,
+        email: email,
+        address: address,
+        firstname: firstname,
+        lastname: lastname,
+        role : "TEACHER",
+        password : password
+    };
+        const teacherData = {
+            studentId: id,
+            phoneNumber: phone_number,
+            specialization: specialization
+        };
+
+        axios.put(`/learning_edu/update_user/${userId}`, userData, {
+            headers:{
                 'Content-Type': 'application/json'
-            }})
-     .then((response)=>{
-         let userId = response.data.result;
-         let studentData = {
-             userId: userId,
-             phone_number: phone_number,
-             cumulative_credit: cumulative_credits,
-             timetableId: timetableId,
-             cumulative_points: cumulative_points,
-             status: status,
-         }
-         axios.post("/learning_edu/Students/create_student", JSON.stringify(studentData),{
-             headers: {
-                 'Content-Type': 'application/json',
-             }
-         }).then((response)=>{
-             getSuccess();
-            setTimeout(function(){
-                window.location.href = "/learning_edu/HomeAdmin/AdminStudents";
-            },2000);
-         }).catch((error)=>{
-             getError();
-             alert("Error", error);
-         });
-      })
+            }
+        }).then((response)=>{
+            axios.put(`/learning_edu/admin/Teachers/update-teacher/${id}`, teacherData, {
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            }).then((response)=>{
+                getSuccess();
+                setTimeout(() => {
+                    window.location.href = "/learning_edu/Admin/Teachers/";
+                }, 2000);
+            }).catch((error)=>{
+                getError();
+                console.log(error);
+            }
+            );
 
- });
+        }).catch((error)=>{
+            console.log(error);
+        }
+        );
+
+    });
     </script>
 
 </body>

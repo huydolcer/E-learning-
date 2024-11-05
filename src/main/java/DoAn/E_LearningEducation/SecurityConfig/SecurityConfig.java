@@ -1,5 +1,6 @@
 package DoAn.E_LearningEducation.SecurityConfig;
 
+import DoAn.E_LearningEducation.Service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,31 +11,29 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-import javax.crypto.spec.SecretKeySpec;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS = { "/menus","/Blogs/show_BlogUser","/login-user",
-            "/node_modules/**","/get_blogs","/admin/login", "/Admin","/auth/verify","/admin/Teachers/*",
-            "/auth/check-login","/","/Blog","/css/**","/js/**","/lib/**","/img/**","/images/**","/vendor/**","/admin/**"};
+    private final String[] PUBLIC_ENDPOINTS = { "/menus", "/login-user", "/admin/**",
+            "/node_modules/**", "/get_blogs", "/auth/verify", "/auth/check-login", "/",
+             "/css/**", "/js/**", "/lib/**", "/img/**", "/images/**", "/vendor/**"};
 
-    private final String[] PUBLIC_POST_ENDPOINTS = {"/admin/Teachers/*","/auth/check-login"};
+    private final String[] PUBLIC_POST_ENDPOINTS = { "/auth/check-login", "/create_user" };
 
     @Value("${jwt.signerKey}")
     private String signerKey;
+
     private final CustomAuthenticationEntrypoint customAuthenticationEntrypoint;
-    public SecurityConfig(CustomAuthenticationEntrypoint customAuthenticationEntrypoint){
+    private final AuthenticationService authenticationService;
+
+    public SecurityConfig(CustomAuthenticationEntrypoint customAuthenticationEntrypoint, AuthenticationService authenticationService) {
         this.customAuthenticationEntrypoint = customAuthenticationEntrypoint;
+        this.authenticationService = authenticationService;
     }
 
     @Bean
@@ -45,41 +44,18 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 )
-//                .exceptionHandling(exceptions -> exceptions
-//                        .authenticationEntryPoint(customAuthenticationEntrypoint)
-//                )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                ))
-                .csrf(AbstractHttpConfigurer::disable);
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(customAuthenticationEntrypoint)
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(new JwtAuthenticationFilter(authenticationService, customAuthenticationEntrypoint),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter(){
-        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-
-        return jwtAuthenticationConverter;
-    }
-
-    @Bean
-    JwtDecoder jwtDecoder(){
-
-        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-
-        return NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build()
-                ;
-    };
-
-    @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
-
 }

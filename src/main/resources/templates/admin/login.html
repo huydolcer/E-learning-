@@ -42,7 +42,7 @@
                                     </div>
                                     <form class="user">
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
+                                            <input type="text" class="form-control form-control-user"
                                                 id="exampleInputUsername" aria-describedby="emailHelp"
                                                 placeholder="Enter Username...">
                                         </div>
@@ -96,5 +96,24 @@
     <script src="/learning_edu/admin/js/sb-admin-2.min.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js">
+
+</script>
+<script>
+   document.querySelector(".check-login").addEventListener("click", async function(e) {
+    e.preventDefault();
+    const username = document.querySelector("#exampleInputUsername").value;
+    const password = document.querySelector("#exampleInputPassword").value;
+    const data = {
+        username: username,
+        password: password
+    }
+    const response = await axios.post("/learning_edu/auth/check-login", data);
+    console.log(response);
+    if (response.status === 200 && response.data.result.authenticated == true) {
+        window.location.href = "/learning_edu/admin/";
+    }
+});
+</script>
 
 </html>

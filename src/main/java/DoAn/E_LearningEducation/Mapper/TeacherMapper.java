@@ -15,5 +15,4 @@ public interface TeacherMapper {
     TeacherResponse toTeacherResponse(Teacher teacher);
 
     void updateTeacher(@MappingTarget Teacher teacher, UpdateTeacherRequest request);
-
 }

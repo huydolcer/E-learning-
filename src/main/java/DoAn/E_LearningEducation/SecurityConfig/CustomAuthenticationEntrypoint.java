@@ -18,5 +18,6 @@ public class CustomAuthenticationEntrypoint implements AuthenticationEntryPoint 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("{\"message\": \"Unauthorized - Token is invalid or missing\"}");
+        response.sendRedirect("/learning_edu/admin/login");
     }
 }

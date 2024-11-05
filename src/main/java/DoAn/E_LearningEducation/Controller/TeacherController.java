@@ -4,7 +4,6 @@ package DoAn.E_LearningEducation.Controller;
 import DoAn.E_LearningEducation.Dto.request.TeacherCreationRequest;
 import DoAn.E_LearningEducation.Dto.request.UpdateTeacherRequest;
 import DoAn.E_LearningEducation.Model.Teacher;
-import DoAn.E_LearningEducation.Repository.TeacherRepository;
 import DoAn.E_LearningEducation.Service.TeacherService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/Teachers")
+@RequestMapping("/Teachers")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TeacherController {
 
@@ -36,12 +35,12 @@ public class TeacherController {
 
     }
 
-    @GetMapping("/find-teacher-by-id")
-    Teacher findTeacherById(String teacherId){
+    @GetMapping("/find-teacher-by-id/{id}")
+    Teacher findTeacherById(@PathVariable("id") String teacherId){
         return teacherService.findTeacherById(teacherId);
     }
 
-    @PostMapping("/update-teacher/{id}")
+    @PutMapping("/update-teacher/{id}")
 
     ResponseEntity<String> updateTeacher(@PathVariable("id") String id, @RequestBody UpdateTeacherRequest request){
 

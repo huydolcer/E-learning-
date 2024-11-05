@@ -10,9 +10,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateTeacherRequest {
     String userId;
-    String cumulative_points;
-    String phone_number;
-    String cumulative_credit;
-    int timetableID;
-    String status;
+    String specialization;
+    String phoneNumber;
 }

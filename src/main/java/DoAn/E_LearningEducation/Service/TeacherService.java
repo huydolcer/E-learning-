@@ -2,12 +2,10 @@ package DoAn.E_LearningEducation.Service;
 
 import DoAn.E_LearningEducation.Dto.request.TeacherCreationRequest;
 import DoAn.E_LearningEducation.Dto.request.UpdateTeacherRequest;
-import DoAn.E_LearningEducation.Dto.response.ApiResponse;
 import DoAn.E_LearningEducation.Dto.response.TeacherResponse;
 import DoAn.E_LearningEducation.Exception.AppException;
 import DoAn.E_LearningEducation.Exception.ErrorCode;
 import DoAn.E_LearningEducation.Mapper.TeacherMapper;
-import DoAn.E_LearningEducation.Model.Student;
 import DoAn.E_LearningEducation.Model.Teacher;
 import DoAn.E_LearningEducation.Model.User;
 import DoAn.E_LearningEducation.Repository.TeacherRepository;

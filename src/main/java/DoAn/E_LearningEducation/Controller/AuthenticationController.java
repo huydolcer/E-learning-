@@ -7,7 +7,9 @@ import DoAn.E_LearningEducation.Dto.response.AuthenticationResponse;
 import DoAn.E_LearningEducation.Dto.response.IntrospectResponse;
 import DoAn.E_LearningEducation.Service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,8 +28,23 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/check-login")
-    ApiResponse<AuthenticationResponse> authenticationResponseApiResponse(@RequestBody AuthenticationRequest request){
+    ApiResponse<AuthenticationResponse> authenticationResponseApiResponse(@RequestBody AuthenticationRequest request,
+                                                                          HttpServletResponse response){
         var result = authenticationService.authenticate(request);
+            System.out.println("KQ =" +result);
+        if(result.isAuthenticated()){
+            Cookie cookie = new Cookie("token", result.getToken());
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60 * 24 * 7);
+            response.addCookie(cookie);
+
+            // In thông tin cookie ra console
+            System.out.println("Cookie Name: " + cookie.getName());
+            System.out.println("Cookie Value: " + cookie.getValue());
+            System.out.println("Cookie Path: " + cookie.getPath());
+            System.out.println("Cookie Max Age: " + cookie.getMaxAge());
+        }
 
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
@@ -44,20 +61,4 @@ public class AuthenticationController {
                 .build();
     }
 
-    @GetMapping("/validate-token")
-    public ResponseEntity<?> validateToken(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-
-        // Kiểm tra token và xác minh
-        if (token != null && isValidToken(token)) {
-            return ResponseEntity.ok().build(); // Trả về 200 OK nếu token hợp lệ
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Trả về 401 nếu token không hợp lệ
-        }
-    }
-
-    private boolean isValidToken(String token) {
-        // Logic kiểm tra token (giả định bạn đã có mã kiểm tra token)
-        return true; // Hoặc false nếu không hợp lệ
-    }
 }
